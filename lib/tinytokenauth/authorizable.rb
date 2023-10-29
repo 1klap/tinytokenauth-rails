@@ -1,15 +1,17 @@
 module Tinytokenauth
 
-  module Authorizable
-    class << self
-      def configuration
-        @configuration ||= Configuration.new
-      end
-
-      def configure
-        yield(configuration)
-      end
+  class << self
+    def configuration
+      @configuration ||= Configuration.new
     end
+
+    def configure
+      yield(configuration)
+    end
+  end
+
+  module Authorizable
+
 
     def authorize_with_header
       token = ''
@@ -19,7 +21,7 @@ module Tinytokenauth
       begin
         @decoded = JsonWebToken.decode(token)
         # @current_user = User.find(@decoded[:user_id])
-        @current_user = Authorizable.configuration.user_class.send 'find', @decoded[:user_id]
+        @current_user = Tinytokenauth.configuration.user_class.send 'find', @decoded[:user_id]
       rescue ActiveRecord::RecordNotFound => e
         render json: { errors: e.message }, status: :unauthorized
       rescue JWT::DecodeError => e
@@ -60,15 +62,15 @@ module Tinytokenauth
     # end
 
     def require_current_user(&block)
-      token = cookies[Authorizable.configuration.cookie_name]
+      token = cookies[Tinytokenauth.configuration.cookie_name]
       # p "token from cookie: #{token}"
       begin
         @decoded = JsonWebToken.decode(token)
         # @current_user = User.find(@decoded[:user_id])
-        @current_user = Authorizable.configuration.user_class.send 'find', @decoded[:user_id]
+        @current_user = Tinytokenauth.configuration.user_class.send 'find', @decoded[:user_id]
         @exp = @decoded[:exp]
-        if Authorizable.configuration.token_auto_renew_hours &&
-          @exp < Authorizable.configuration.token_auto_renew_hours.hours.from_now.to_i
+        if Tinytokenauth.configuration.token_auto_renew_hours &&
+          @exp < Tinytokenauth.configuration.token_auto_renew_hours.hours.from_now.to_i
           sign_in @current_user
         end
       rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
@@ -115,9 +117,9 @@ module Tinytokenauth
     def sign_in(user)
       @current_user = user
       jwt = JsonWebToken.encode(user_id: user.id,
-                                exp: Authorizable.configuration.token_validity_hours.hours.from_now,
-                                secret: Authorizable.configuration.token_secret)
-      cookies[Authorizable.configuration.cookie_name] = jwt
+                                exp: Tinytokenauth.configuration.token_validity_hours.hours.from_now,
+                                secret: Tinytokenauth.configuration.token_secret)
+      cookies[Tinytokenauth.configuration.cookie_name] = jwt
     end
 
     def current_user
