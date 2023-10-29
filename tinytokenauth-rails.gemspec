@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/tinytokenauth/rails/version"
+require_relative "lib/tinytokenauth/version"
 
 Gem::Specification.new do |spec|
   spec.name = "tinytokenauth-rails"
-  spec.version = Tinytokenauth::Rails::VERSION
+  spec.version = Tinytokenauth::VERSION
   spec.authors = ["Kim Laplume"]
   spec.email = ["kim.laplume@protonmail.com"]
 
@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  # Uncomment to register a new dependency of your gem
+  spec.add_dependency "rails", ">= 6.0"
   spec.add_dependency "jwt", "~> 2.7"
   spec.add_dependency "bcrypt", "~> 3.1"
 
