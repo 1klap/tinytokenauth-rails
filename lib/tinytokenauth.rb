@@ -4,6 +4,7 @@ module Tinytokenauth
   require_relative "tinytokenauth/version"
   require_relative "tinytokenauth/railtie"
   require_relative 'tinytokenauth/configuration'
+  require_relative 'tinytokenauth/json_web_token'
   require_relative "tinytokenauth/authorizable"
   require_relative "tinytokenauth/view_helpers"
 
