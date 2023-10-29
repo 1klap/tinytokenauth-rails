@@ -20,7 +20,8 @@ module Tinytokenauth
 
       begin
         @decoded = JsonWebToken.decode(Tinytokenauth.configuration.token_secret, token)
-        @current_user = Tinytokenauth.configuration.user_class.send 'find', @decoded[:user_id]
+        # @current_user = Tinytokenauth.configuration.user_class.send 'find', @decoded[:user_id]
+        @current_user = User.find @decoded[:user_id]
       rescue ActiveRecord::RecordNotFound => e
         render json: { errors: e.message }, status: :unauthorized
       rescue JWT::DecodeError => e
@@ -32,7 +33,7 @@ module Tinytokenauth
       token = cookies[Tinytokenauth.configuration.cookie_name]
       begin
         @decoded = JsonWebToken.decode(Tinytokenauth.configuration.token_secret, token)
-        @current_user = Tinytokenauth.configuration.user_class.send 'find', @decoded[:user_id]
+        @current_user = User.find @decoded[:user_id]
         @exp = @decoded[:exp]
         if Tinytokenauth.configuration.token_auto_renew_hours &&
           @exp < Tinytokenauth.configuration.token_auto_renew_hours.hours.from_now.to_i
