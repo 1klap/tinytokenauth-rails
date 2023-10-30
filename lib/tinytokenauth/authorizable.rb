@@ -38,7 +38,13 @@ module Tinytokenauth
           @exp < Tinytokenauth.configuration.token_auto_renew_hours.hours.from_now.to_i
           sign_in_with_token @current_user
         end
-      rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
+      rescue ActiveRecord::RecordNotFound => e
+        if block_given? && current_user.nil?
+          block.call
+        else
+          raise e
+        end
+      rescue JWT::DecodeError => e
         if block_given? && current_user.nil?
           block.call
         else
