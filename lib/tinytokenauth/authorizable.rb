@@ -20,7 +20,7 @@ module Tinytokenauth
 
       begin
         @decoded = JsonWebToken.decode(Tinytokenauth.configuration.token_secret, token)
-        @current_user = Tinytokenauth.configuration.user_class.constantize.send 'find', @decoded[:user_id]
+        @current_user = Tinytokenauth.configuration.user_class.constantize.send 'find', @decoded[:tinytokenauth_id]
       rescue ActiveRecord::RecordNotFound => e
         render json: { errors: e.message }, status: :unauthorized
       rescue JWT::DecodeError => e

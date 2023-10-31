@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tinytokenauth-rails (0.90.2)
+    tinytokenauth-rails (0.90.3)
       jwt (~> 2.7)
       rails (>= 6.0)
 
